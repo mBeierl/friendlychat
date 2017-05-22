@@ -30,6 +30,8 @@ function FriendlyChat() {
   this.userPic = document.getElementById('user-pic');
   this.userName = document.getElementById('user-name');
   this.signInButton = document.getElementById('sign-in');
+  this.signInGithubButton = document.getElementById('sign-in-github');
+  this.signInFbButton = document.getElementById('sign-in-fb');
   this.signOutButton = document.getElementById('sign-out');
   this.signInSnackbar = document.getElementById('must-signin-snackbar');
 
@@ -37,6 +39,8 @@ function FriendlyChat() {
   this.messageForm.addEventListener('submit', this.saveMessage.bind(this));
   this.signOutButton.addEventListener('click', this.signOut.bind(this));
   this.signInButton.addEventListener('click', this.signIn.bind(this));
+  this.signInGithubButton.addEventListener('click', this.signIn.bind(this, 'github'));
+  this.signInFbButton.addEventListener('click', this.signIn.bind(this, 'fb'));
 
   // Toggle for the button.
   var buttonTogglingHandler = this.toggleButton.bind(this);
@@ -157,9 +161,14 @@ FriendlyChat.prototype.saveImageMessage = function(event) {
 };
 
 // Signs-in Friendly Chat.
-FriendlyChat.prototype.signIn = function() {
+FriendlyChat.prototype.signIn = function(providerName) {
   // Sign in Firebase using popup auth and Google as the identity provider.
   var provider = new firebase.auth.GoogleAuthProvider();
+  if (providerName === 'github') {
+    provider = new firebase.auth.GithubAuthProvider();
+  } else if (providerName === 'fb') {
+    provider = new firebase.auth.FacebookAuthProvider();
+  }
   this.auth.signInWithPopup(provider);
 };
 
@@ -187,6 +196,8 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 
     // Hide sign-in button.
     this.signInButton.setAttribute('hidden', 'true');
+    this.signInGithubButton.setAttribute('hidden', 'true');
+    this.signInFbButton.setAttribute('hidden', 'true');
 
     // We load currently existing chant messages.
     this.loadMessages();
@@ -201,6 +212,8 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 
     // Show sign-in button.
     this.signInButton.removeAttribute('hidden');
+    this.signInGithubButton.removeAttribute('hidden');
+    this.signInFbButton.removeAttribute('hidden');
   }
 };
 
